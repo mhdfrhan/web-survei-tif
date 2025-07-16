@@ -24,7 +24,7 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center gap-2" wire:navigate>
                         <img class="h-14 w-auto" src="{{ asset('assets/img/logo.png') }}" alt="Logo">
-                        <img class="h-14 w-auto" src="{{ asset('assets/img/logo-tif.png') }}" alt="Logo">
+                        <img class="h-14 w-auto" src="{{ asset('assets/img/logo-fasilkom.png') }}" alt="Logo">
                     </a>
                 </div>
 
