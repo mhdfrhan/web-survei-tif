@@ -17,11 +17,11 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Illuminate\Support\Collection;
 
-class SurveyResponsesExport implements 
-    FromCollection, 
-    WithHeadings, 
-    WithStyles, 
-    WithColumnWidths, 
+class SurveyResponsesExport implements
+    FromCollection,
+    WithHeadings,
+    WithStyles,
+    WithColumnWidths,
     WithTitle,
     ShouldAutoSize
 {
@@ -98,10 +98,10 @@ class SurveyResponsesExport implements
 
                 if ($answer !== null && $answer !== '') {
                     $stats['total_responses']++;
-                    
+
                     // Handle array answers (like multiple choice)
                     $answerValue = is_array($answer) ? implode(', ', $answer) : (string)$answer;
-                    
+
                     // Map answer values to categories
                     $normalizedAnswer = $this->normalizeAnswer($answerValue);
                     if (array_key_exists($normalizedAnswer, $stats)) {
@@ -122,9 +122,9 @@ class SurveyResponsesExport implements
         if (is_array($answer)) {
             $answer = implode(', ', $answer);
         }
-        
+
         $answer = strtolower(trim((string)$answer));
-        
+
         $mappings = [
             'sangat baik' => 'sangat_baik',
             'baik' => 'baik',
@@ -132,10 +132,9 @@ class SurveyResponsesExport implements
             'kurang' => 'kurang',
             'sangat_baik' => 'sangat_baik',
             'sangat_kurang' => 'kurang',
-            '5' => 'sangat_baik',
-            '4' => 'baik',
-            '3' => 'cukup',
-            '2' => 'kurang',
+            '4' => 'sangat_baik',
+            '3' => 'baik',
+            '2' => 'cukup',
             '1' => 'kurang',
         ];
 
@@ -150,26 +149,26 @@ class SurveyResponsesExport implements
         if ($total === 0) {
             return '0%';
         }
-        
+
         return round(($count / $total) * 100) . '%';
     }
 
     public function collection(): Collection
     {
         $rows = collect();
-        
+
         if ($this->questions->isEmpty()) {
             return $rows;
         }
-        
+
         // Add section headers and questions
         $currentSection = null;
         $questionNumber = 1;
         $sectionLetter = 'A';
-        
+
         foreach ($this->questions as $question) {
             $sectionTitle = $question->section ? $question->section->section_title : 'Umum';
-            
+
             // Add section header if it's a new section
             if ($currentSection !== $sectionTitle) {
                 $rows->push([
@@ -192,17 +191,17 @@ class SurveyResponsesExport implements
                 'cukup' => 0,
                 'kurang' => 0,
             ];
-            
+
             $totalResponses = $stats['total_responses'];
 
             $rows->push([
                 'no' => $questionNumber,
                 'instrumen' => $question->question_text ?? '',
                 'jumlah' => $totalResponses,
-                'sangat_baik' => $this->calculatePercentage($stats['sangat_baik'], $totalResponses),
-                'baik' => $this->calculatePercentage($stats['baik'], $totalResponses),
-                'cukup' => $this->calculatePercentage($stats['cukup'], $totalResponses),
-                'kurang' => $this->calculatePercentage($stats['kurang'], $totalResponses),
+                'sangat_baik' => $stats['sangat_baik'],
+                'baik' => $stats['baik'],
+                'cukup' => $stats['cukup'],
+                'kurang' => $stats['kurang'],
             ]);
 
             $questionNumber++;
@@ -228,7 +227,7 @@ class SurveyResponsesExport implements
     {
         $lastRow = $sheet->getHighestRow();
         $lastColumn = $sheet->getHighestColumn();
-        
+
         if ($lastRow <= 1) {
             return [];
         }
@@ -249,7 +248,7 @@ class SurveyResponsesExport implements
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ],
             ],
-            
+
             // All cells border
             "A1:{$lastColumn}{$lastRow}" => [
                 'borders' => [
@@ -259,14 +258,14 @@ class SurveyResponsesExport implements
                     ],
                 ],
             ],
-            
+
             // Center alignment for number columns
             "A1:A{$lastRow}" => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ],
             ],
-            
+
             // Center alignment for response data
             "C1:{$lastColumn}{$lastRow}" => [
                 'alignment' => [
@@ -274,7 +273,7 @@ class SurveyResponsesExport implements
                 ],
             ],
         ];
-        
+
         // Add section header styling
         $sectionHeaderRows = $this->getSectionHeaderRows();
         foreach ($sectionHeaderRows as $rowNumber) {
@@ -289,7 +288,7 @@ class SurveyResponsesExport implements
                 ],
             ];
         }
-        
+
         return $styles;
     }
 
@@ -301,23 +300,23 @@ class SurveyResponsesExport implements
         if ($this->questions->isEmpty()) {
             return [];
         }
-        
+
         $headerRows = [];
         $currentSection = null;
         $rowNumber = 2; // Start from row 2 (after headers)
-        
+
         foreach ($this->questions as $question) {
             $sectionTitle = $question->section ? $question->section->section_title : 'Umum';
-            
+
             if ($currentSection !== $sectionTitle) {
                 $headerRows[] = $rowNumber;
                 $currentSection = $sectionTitle;
                 $rowNumber++; // Skip section header row
             }
-            
+
             $rowNumber++; // Question row
         }
-        
+
         return $headerRows;
     }
 
