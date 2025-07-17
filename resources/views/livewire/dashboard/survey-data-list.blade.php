@@ -34,7 +34,7 @@
             @if ($surveyType === 'vmts')
                 <div>
                     <label class="block text-sm font-medium text-neutral-700 mb-1">Kategori Responden</label>
-                    <select wire:model="respondentCategory"
+                    <select wire:model.live="respondentCategory"
                         class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy-500">
                         <option value="">Semua</option>
                         @foreach ($respondentCategories as $key => $label)
@@ -54,57 +54,52 @@
         </div>
     </div>
 
-    <div class="overflow-x-auto bg-white rounded-xl border">
-        <table class="min-w-full divide-y divide-neutral-200">
-            <thead class="bg-navy-50">
-                <tr>
-                    <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">#</th>
-                    <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Tanggal</th>
-                    @if ($surveyType === 'vmts')
-                        <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Kategori</th>
-                    @endif
-                    <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Form Data</th>
-                    <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($responses as $i =>  $row)
-                    <tr class="hover:bg-navy-50/50">
-                        <td class="px-4 py-2 text-sm text-neutral-700">{{ $responses->firstItem() + $i }}</td>
-                        <td class="px-4 py-2 text-sm text-neutral-700">
-                            {{ date('d F Y', strtotime($row->submitted_at)) }}</td>
-                        @if ($surveyType === 'vmts')
-                            <td class="px-4 py-2 text-sm text-neutral-700">{{ $row->respondent_category ?? '-' }}</td>
-                        @endif
-                        <td class="px-4 py-2 text-xs text-neutral-600 max-w-xs break-words">
-                            @foreach (json_decode($row->form_data, true) ?? [] as $k => $v)
-                                <div><span class="font-semibold">{{ $k }}:</span>
-                                    {{ is_array($v) ? json_encode($v) : $v }}</div>
-                            @endforeach
-                        </td>
-                        <td class="px-4 py-2 text-sm">
-                            <div class="flex items-center gap-2">
-                                <x-secondary-button wire:click="viewResponse({{ $row->id }})"
-                                    x-data=""
-                                    x-on:click.prevent="$dispatch('open-modal', 'view-response-modal')"
-                                    class="text-xs !p-1 !w-8 !h-8 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="size-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                                    </svg>
-                                </x-secondary-button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
+    @foreach ($sections as $section)
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-navy-800 mb-4">{{ $section->section_title }}</h2>
+            <table class="min-w-full divide-y divide-neutral-200">
+                <thead class="bg-navy-50">
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-neutral-400">Tidak ada data.</td>
+                        <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">#</th>
+                        <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Tanggal</th>
+                        @foreach ($section->questions as $q)
+                            <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">
+                                {{ $q->question_text }}</th>
+                        @endforeach
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @forelse($responses as $i => $row)
+                        <tr class="hover:bg-navy-50/50">
+                            <td class="px-4 py-2 text-sm text-neutral-700">{{ $responses->firstItem() + $i }}</td>
+                            <td class="px-4 py-2 text-sm text-neutral-700">
+                                {{ date('d F Y', strtotime($row->submitted_at)) }}</td>
+                            @foreach ($section->questions as $q)
+                                @php
+                                    $answers = json_decode($row->question_answers, true) ?? [];
+                                    $answer = $answers[$q->id] ?? '-';
+                                @endphp
+                                <td class="px-4 py-2 text-sm text-neutral-700">
+                                    <span class="text-navy-800 bg-navy-100 px-2 py-1 rounded-lg">
+                                        @if (is_array($answer))
+                                            {{ implode(', ', $answer) }}
+                                        @else
+                                            {{ $answer }}
+                                        @endif
+                                    </span>
+                                </td>
+                            @endforeach
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="{{ count($section->questions) + 2 }}"
+                                class="px-4 py-8 text-center text-neutral-400">Tidak ada data.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    @endforeach
 
     <x-modal name="view-response-modal" :show="$showViewResponseModal" focusable align="center" maxWidth="3xl">
         <div class="p-8">

@@ -43,5 +43,10 @@ class SurveyTypes extends Model
     {
         return $this->questions()->where('is_active', true);
     }
+
+    public function sections()
+    {
+        return $this->hasMany(SurveySections::class, 'survey_type_id')->orderBy('sort_order');
+    }
     
 }

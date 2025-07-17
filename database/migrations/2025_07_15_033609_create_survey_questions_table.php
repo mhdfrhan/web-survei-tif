@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('survey_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('survey_type_id')->constrained()->onDelete('cascade');
+            $table->foreignId('survey_section_id')->constrained()->onDelete('cascade');
             $table->text('question_text');
             $table->enum('question_type', ['rating', 'text', 'multiple_choice', 'checkbox']);
             $table->json('options')->nullable(); // Untuk multiple choice atau rating scale

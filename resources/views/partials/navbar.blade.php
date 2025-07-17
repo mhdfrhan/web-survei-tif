@@ -34,9 +34,9 @@
                         Beranda
                     </a>
 
-                    <a href="https://informatika.fasilkom.umri.ac.id/" target="_blank"
+                    <a href="https://fasilkom.umri.ac.id/" target="_blank"
                         class=" px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-in-out hover:bg-navy-50 hover:text-navy-800">
-                        Teknik Informatika
+                        Fakultas Ilmu Komputer
                     </a>
 
                 </div>

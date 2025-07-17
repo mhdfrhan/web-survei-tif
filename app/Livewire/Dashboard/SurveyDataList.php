@@ -5,11 +5,12 @@ namespace App\Livewire\Dashboard;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\SurveyTypes;
-use App\Models\SurveyResponses;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SurveyResponsesExport;
 use App\Models\SurveyFormFields;
 use App\Models\SurveyQuestions;
+use App\Models\SurveyResponses;
+use App\Models\SurveySections;
 
 class SurveyDataList extends Component
 {
@@ -88,8 +89,7 @@ class SurveyDataList extends Component
             ->when($surveyTypeModel, fn($q) => $q->where('survey_type_id', $surveyTypeModel->id))
             ->when(
                 $this->surveyType === 'vmts' && $this->respondentCategory,
-                fn($q) =>
-                $q->where('respondent_category', $this->respondentCategory)
+                fn($q) => $q->where('respondent_category', $this->respondentCategory)
             )
             ->orderByDesc('submitted_at');
 
@@ -97,10 +97,22 @@ class SurveyDataList extends Component
 
         $this->hasMorePages = $responses->hasMorePages();
 
+        // Ambil sections beserta pertanyaannya
+        $sections = [];
+        if ($surveyTypeModel) {
+            $sections = SurveySections::with(['questions' => function ($q) {
+                $q->orderBy('sort_order');
+            }])
+                ->where('survey_type_id', $surveyTypeModel->id)
+                ->orderBy('sort_order')
+                ->get();
+        }
+
         return view('livewire.dashboard.survey-data-list', [
             'responses' => $responses,
             'surveyTypes' => $this->surveyTypes,
             'respondentCategories' => $this->respondentCategories,
+            'sections' => $sections, // <-- tambahkan ini
         ]);
     }
 }

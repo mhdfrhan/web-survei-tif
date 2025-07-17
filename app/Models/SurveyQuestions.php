@@ -11,6 +11,7 @@ class SurveyQuestions extends Model
 
     protected $fillable = [
         'survey_type_id',
+        'survey_section_id',
         'question_text',
         'question_type',
         'options',
@@ -71,5 +72,10 @@ class SurveyQuestions extends Model
         }
 
         return $options;
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(SurveySections::class, 'survey_section_id');
     }
 }

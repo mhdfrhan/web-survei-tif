@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('survey_responses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('survey_type_id')->constrained()->onDelete('cascade');
+            $table->foreignId('survey_section_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('respondent_id')->nullable(); // ID responden jika ada
             $table->json('form_data'); // Data form utama (program_studi, tahun_masuk, dll)
             $table->string('respondent_category')->nullable();

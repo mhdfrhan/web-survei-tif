@@ -15,6 +15,7 @@ class Vmts extends Component
     public $formData = [];
     public $answers = [];
     public $respondentCategory;
+    public $sections = [];
 
     public function mount()
     {
@@ -32,6 +33,7 @@ class Vmts extends Component
             $this->surveyTitle = $survey->title;
             $this->surveyDescription = $survey->description;
             $this->formFields = $survey->formFields;
+            $this->sections = $survey->sections;
             $this->questions = $survey->questions;
         }
     }
@@ -64,6 +66,7 @@ class Vmts extends Component
         $surveyType = SurveyTypes::where('name', 'VMTS')->first();
         SurveyResponses::create([
             'survey_type_id' => $surveyType->id,
+            'survey_section_id' => $this->sections[0]->id ?? null,
             'form_data' => json_encode($this->formData),
             'respondent_category' => $this->respondentCategory,
             'question_answers' => json_encode($this->answers),
@@ -77,6 +80,7 @@ class Vmts extends Component
 
     public function render()
     {
+        
         return view('livewire.home.survey.vmts');
     }
 }

@@ -11,6 +11,7 @@ class SurveyResponses extends Model
 
     protected $fillable = [
         'survey_type_id',
+        'survey_section_id',
         'respondent_id',
         'form_data',
         'question_answers',
@@ -59,5 +60,10 @@ class SurveyResponses extends Model
     public function getFormValue($fieldName)
     {
         return $this->form_data[$fieldName] ?? null;
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(SurveySections::class, 'survey_section_id');
     }
 }

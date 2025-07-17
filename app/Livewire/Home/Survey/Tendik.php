@@ -14,6 +14,7 @@ class Tendik extends Component
     public $questions = [];
     public $formData = [];
     public $answers = [];
+    public $sections = [];
 
     public function mount()
     {
@@ -31,6 +32,7 @@ class Tendik extends Component
             $this->surveyTitle = $survey->title;
             $this->surveyDescription = $survey->description;
             $this->formFields = $survey->formFields;
+            $this->sections = $survey->sections;
             $this->questions = $survey->questions;
         }
     }
@@ -54,10 +56,12 @@ class Tendik extends Component
         ];
         $this->validate($rules, $messages);
 
+
         // Simpan ke database
         $surveyType = SurveyTypes::where('name', 'TENDIK')->first();
         SurveyResponses::create([
             'survey_type_id' => $surveyType->id,
+            'survey_section_id' => $this->sections[0]->id ?? null,
             'form_data' => json_encode($this->formData),
             'question_answers' => json_encode($this->answers),
             'submitted_at' => now(),

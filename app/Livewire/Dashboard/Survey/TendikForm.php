@@ -2,19 +2,25 @@
 
 namespace App\Livewire\Dashboard\Survey;
 
+use Livewire\Component;
 use App\Models\SurveyFormFields;
 use App\Models\SurveyQuestions;
+use App\Models\SurveySections;
 use App\Models\SurveyTypes;
+use App\Services\SurveyService;
 use Illuminate\Support\Facades\DB;
-use Livewire\Component;
+use Illuminate\Support\Str;
 
 class TendikForm extends Component
 {
     // Survey Type Properties
     public $surveyType;
-    public $title = 'Instrumen Kepuasan Tenaga Pendidik Terhadap Fakultas Ilmu Komputer Umri';
+    public $title = 'Survei Pengukuran Pemahaman Tendik Fakultas Ilmu Komputer';
     public $description = '';
     public $isActive = true;
+    public $sections = [];
+    public $showSectionModal = false;
+
 
     // Form Fields Properties
     public $formFields = [];
@@ -43,6 +49,12 @@ class TendikForm extends Component
         ],
         'is_required' => true,
         'sort_order' => 0
+    ];
+
+    public $newSection = [
+        'section_title' => '',
+        'section_description' => '',
+        'slug' => '',
     ];
 
     // UI State Properties
@@ -77,7 +89,20 @@ class TendikForm extends Component
 
     public function mount()
     {
+        $this->loadSections();
         $this->loadTendikSurvey();
+    }
+
+    public function loadSections()
+    {
+        $surveyType = SurveyTypes::where('name', 'TENDIK')->first();
+        if ($surveyType) {
+            $this->sections = SurveySections::where('survey_type_id', $surveyType->id)
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->get()
+                ->toArray();
+        }
     }
 
     public function loadTendikSurvey()
@@ -194,6 +219,9 @@ class TendikForm extends Component
     public function saveQuestion()
     {
         $this->validate([
+            'newQuestion.survey_section_id' => 'required|exists:survey_sections,id',
+            'newQuestion.question_text' => 'required|string',
+            'newQuestion.question_type' => 'required|string|in:rating,text,multiple_choice,checkbox',
             'newQuestion.question_text' => 'required|string',
             'newQuestion.question_type' => 'required|string|in:rating,text,multiple_choice,checkbox'
         ]);
@@ -226,6 +254,7 @@ class TendikForm extends Component
         );
     }
 
+
     public function resetQuestionData()
     {
         $this->newQuestion = [
@@ -249,11 +278,10 @@ class TendikForm extends Component
     public function saveAllData()
     {
         if (!$this->surveyType) {
-            $this->dispatch(
-                'notify',
-                type: 'error',
-                message: 'Simpan informasi survey terlebih dahulu!'
-            );
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Simpan informasi survey terlebih dahulu!'
+            ]);
             return;
         }
 
@@ -287,7 +315,7 @@ class TendikForm extends Component
             $this->dispatch(
                 'notify',
                 type: 'error',
-                message: 'Terjadi kesalahan saat menyimpan data.'
+                message: $e->getMessage()
             );
         }
     }
@@ -319,13 +347,63 @@ class TendikForm extends Component
         $this->resetQuestionData();
         $this->editingQuestionIndex = null;
     }
-    
+
     public function openFormFieldModal()
     {
         $this->resetFormFieldData();
         $this->editingFormFieldIndex = null;
     }
-    
+
+    public function openSectionModal()
+    {
+        $this->resetSectionData();
+    }
+
+
+    public function saveSection()
+    {
+        if (!$this->surveyType) {
+            $this->dispatch('notify', type: 'error', message: 'Simpan informasi survey terlebih dahulu!');
+            return;
+        }
+
+        try {
+            $this->validate([
+                'newSection.section_title' => 'required|string|max:255',
+            ]);
+        } catch (\Throwable $th) {
+            $this->dispatch('notify', type: 'error', message: 'Validation error: ' . $th->getMessage());
+            return;
+        }
+
+        try {
+            $section = SurveySections::create([
+                'survey_type_id' => $this->surveyType->id,
+                'section_title' => $this->newSection['section_title'],
+                'section_description' => $this->newSection['section_description'],
+                'slug' => Str::slug($this->newSection['section_title']),
+                'sort_order' => count($this->sections) + 1,
+                'is_active' => true,
+            ]);
+
+            $this->sections[] = $section->toArray();
+            $this->dispatch('close-modal', 'add-section-modal');
+            $this->resetSectionData();
+            $this->dispatch('notify', type: 'success', message: 'Section berhasil ditambahkan!');
+        } catch (\Throwable $th) {
+            $this->dispatch('notify', type: 'error', message: 'Terjadi kesalahan saat menambahkan section: ' . $th->getMessage());
+        }
+    }
+
+    public function resetSectionData()
+    {
+        $this->newSection = [
+            'section_title' => '',
+            'section_description' => '',
+            'slug' => '',
+        ];
+    }
+
     public function render()
     {
         return view('livewire.dashboard.survey.tendik-form');
