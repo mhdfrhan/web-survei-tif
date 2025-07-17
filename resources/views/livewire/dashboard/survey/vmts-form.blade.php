@@ -330,7 +330,7 @@
                     <label for="isRequired" class="block text-sm text-gray-700">Field wajib diisi</label>
                 </div>
                 <div class="flex justify-end space-x-2 pt-4">
-                    <x-secondary-button type="button" wire:click="closeFormFieldModal">Batal</x-secondary-button>
+                    <x-secondary-button type="button" x-on:click="$dispatch('close')">Batal</x-secondary-button>
                     <x-primary-button type="submit">Simpan Field</x-primary-button>
                 </div>
             </div>
@@ -356,7 +356,7 @@
                         placeholder="Deskripsi section (opsional)"></textarea>
                 </div>
                 <div class="flex justify-end space-x-2 pt-4">
-                    <x-secondary-button type="button" wire:click="closeSectionModal">Batal</x-secondary-button>
+                    <x-secondary-button type="button" x-on:click="$dispatch('close')">Batal</x-secondary-button>
                     <x-primary-button type="submit">Simpan Section</x-primary-button>
                 </div>
             </div>
@@ -456,7 +456,7 @@
                     <label for="isRequiredQuestion" class="block text-sm text-gray-700">Pertanyaan wajib diisi</label>
                 </div>
                 <div class="flex justify-end space-x-2 pt-4">
-                    <x-secondary-button type="button" wire:click="closeQuestionModal">Batal</x-secondary-button>
+                    <x-secondary-button type="button" x-on:click="$dispatch('close')">Batal</x-secondary-button>
                     <x-primary-button type="submit">Simpan Pertanyaan</x-primary-button>
                 </div>
             </div>
