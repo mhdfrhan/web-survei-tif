@@ -1,6 +1,6 @@
-<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+<div class="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     @include('components.alert')
-    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-8">
         <div class="mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-navy-800 mb-2">{{ $surveyTitle ?? 'Survey VMTS' }}</h1>
             @if (!empty($surveyDescription))
