@@ -31,9 +31,15 @@ class DashboardController extends Controller
         return view('dashboard.survey.mahasiswa');
     }
 
+    public function surveiTIF()
+    {
+        return view('dashboard.survey.vmts-tif');
+    }
+
     public function rekapData()
     {
         
         return view('dashboard.rekap-data');
     }
+
 }

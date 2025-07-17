@@ -57,7 +57,8 @@ class SurveyDataList extends Component
     public function getSurveyTypesProperty()
     {
         return [
-            'vmts' => 'VMTS',
+            'vmts' => 'VMTS Fakultas',
+            'vmtstif' => 'VMTS Prodi',
             'dosen' => 'Dosen',
             'tendik' => 'Tendik',
             'mahasiswa' => 'Mahasiswa',
@@ -88,7 +89,7 @@ class SurveyDataList extends Component
         $query = SurveyResponses::query()
             ->when($surveyTypeModel, fn($q) => $q->where('survey_type_id', $surveyTypeModel->id))
             ->when(
-                $this->surveyType === 'vmts' && $this->respondentCategory,
+                in_array($this->surveyType, ['vmts', 'vmtstif']) && $this->respondentCategory,
                 fn($q) => $q->where('respondent_category', $this->respondentCategory)
             )
             ->orderByDesc('submitted_at');

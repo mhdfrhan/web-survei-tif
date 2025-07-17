@@ -81,7 +81,13 @@
                         <li class="px-1 py-0.5 first:mt-2">
                             <a href="{{ route('dashboard.survey.vmts') }}" wire:navigate
                                 class="flex items-center rounded-lg gap-2 px-4 py-1.5 focus:outline-none font-medium border duration-150 {{ request()->routeIs('dashboard.survey.vmts') ? 'border-navy-500 text-white' : 'border-transparent hover:border-navy-500 text-navy-200 hover:text-navy-50' }}">
-                                VMTS
+                                VMTS Fakultas
+                            </a>
+                        </li>
+                        <li class="px-1 py-0.5 first:mt-2">
+                            <a href="{{ route('dashboard.survey.tif') }}" wire:navigate
+                                class="flex items-center rounded-lg gap-2 px-4 py-1.5 focus:outline-none font-medium border duration-150 {{ request()->routeIs('dashboard.survey.tif') ? 'border-navy-500 text-white' : 'border-transparent hover:border-navy-500 text-navy-200 hover:text-navy-50' }}">
+                                VMTS Prodi
                             </a>
                         </li>
                         <li class="px-1 py-0.5 first:mt-2">

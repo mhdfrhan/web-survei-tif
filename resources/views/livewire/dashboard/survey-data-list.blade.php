@@ -31,7 +31,7 @@
                     @endforeach
                 </select>
             </div>
-            @if ($surveyType === 'vmts')
+            @if ($surveyType === 'vmts' || $surveyType === 'vmtstif')
                 <div>
                     <label class="block text-sm font-medium text-neutral-700 mb-1">Kategori Responden</label>
                     <select wire:model.live="respondentCategory"
@@ -57,47 +57,55 @@
     @foreach ($sections as $section)
         <div class="mb-6">
             <h2 class="text-2xl font-bold text-navy-800 mb-4">{{ $section->section_title }}</h2>
-            <table class="min-w-full divide-y divide-neutral-200">
-                <thead class="bg-navy-50">
-                    <tr>
-                        <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">#</th>
-                        <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Tanggal</th>
-                        @foreach ($section->questions as $q)
-                            <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">
-                                {{ $q->question_text }}</th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($responses as $i => $row)
-                        <tr class="hover:bg-navy-50/50">
-                            <td class="px-4 py-2 text-sm text-neutral-700">{{ $responses->firstItem() + $i }}</td>
-                            <td class="px-4 py-2 text-sm text-neutral-700">
-                                {{ date('d F Y', strtotime($row->submitted_at)) }}</td>
-                            @foreach ($section->questions as $q)
-                                @php
-                                    $answers = json_decode($row->question_answers, true) ?? [];
-                                    $answer = $answers[$q->id] ?? '-';
-                                @endphp
-                                <td class="px-4 py-2 text-sm text-neutral-700">
-                                    <span class="text-navy-800 bg-navy-100 px-2 py-1 rounded-lg">
-                                        @if (is_array($answer))
-                                            {{ implode(', ', $answer) }}
-                                        @else
-                                            {{ $answer }}
-                                        @endif
-                                    </span>
-                                </td>
-                            @endforeach
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="{{ count($section->questions) + 2 }}"
-                                class="px-4 py-8 text-center text-neutral-400">Tidak ada data.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <div class="min-w-max">
+                    <table class="min-w-full divide-y divide-neutral-200">
+                        <thead class="bg-navy-50">
+                            <tr>
+                                <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">#</th>
+                                <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Tanggal
+                                </th>
+                                @foreach ($section->questions as $q)
+                                    <th class="px-4 py-3 uppercase text-center text-xs font-semibold text-navy-700 max-w-20" title="{{ $q->question_text }}">
+                                        <p class="line-clamp-1">{{ $q->question_text }}
+                                    </th>
+                                    </p>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($responses as $i => $row)
+                                <tr class="hover:bg-navy-50/50">
+                                    <td class="px-4 py-2 text-sm text-neutral-700">{{ $responses->firstItem() + $i }}
+                                    </td>
+                                    <td class="px-4 py-2 text-sm text-neutral-700">
+                                        {{ date('d F Y', strtotime($row->submitted_at)) }}</td>
+                                    @foreach ($section->questions as $q)
+                                        @php
+                                            $answers = json_decode($row->question_answers, true) ?? [];
+                                            $answer = $answers[$q->id] ?? '-';
+                                        @endphp
+                                        <td class="px-4 py-2 text-sm text-neutral-700 text-center">
+                                            <span class="text-navy-800 bg-navy-100 px-2 py-1 rounded-lg inline-block">
+                                                @if (is_array($answer))
+                                                    {{ implode(', ', $answer) }}
+                                                @else
+                                                    {{ $answer }}
+                                                @endif
+                                            </span>
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ count($section->questions) + 2 }}"
+                                        class="px-4 py-8 text-center text-neutral-400">Tidak ada data.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     @endforeach
 

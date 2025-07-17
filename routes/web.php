@@ -15,6 +15,7 @@ Route::controller(SurveyController::class)->group(function () {
     Route::get('/survei/teknik-informatika', 'surveiTIF')->name('survey.tif');
 
     Route::get('/survei-submitted', 'surveySubmitted')->name('survey.submitted');
+    Route::get('/survei/teknik-informatika/submitted', 'surveiTIFSubmitted')->name('survey.tif.submitted');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard/survei/dosen', 'surveyDosen')->name('dashboard.survey.dosen');
         Route::get('/dashboard/survei/tenaga-pendidik', 'surveyTendik')->name('dashboard.survey.tendik');
         Route::get('/dashboard/survei/mahasiswa', 'surveyMahasiswa')->name('dashboard.survey.mahasiswa');
+        Route::get('/dashboard/survei/teknik-informatika', 'surveiTIF')->name('dashboard.survey.tif');
         Route::get('/dashboard/feedback', 'feedback')->name('dashboard.feedback');
 
         // rekap data
@@ -35,4 +37,4 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

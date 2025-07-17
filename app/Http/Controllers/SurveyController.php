@@ -35,4 +35,9 @@ class SurveyController extends Controller
     {
         return view('survey.tif');
     }
+
+    public function surveiTIFSubmitted()
+    {
+        return view('survey.tif-submitted');
+    }
 }
