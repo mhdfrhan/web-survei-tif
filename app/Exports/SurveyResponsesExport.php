@@ -89,7 +89,8 @@ class SurveyResponsesExport implements
                     continue;
                 }
 
-                $answers = json_decode($response->question_answers, true);
+                $answers = $response->question_answers; // Sudah array
+
                 if (!is_array($answers)) {
                     continue;
                 }
@@ -99,16 +100,15 @@ class SurveyResponsesExport implements
                 if ($answer !== null && $answer !== '') {
                     $stats['total_responses']++;
 
-                    // Handle array answers (like multiple choice)
                     $answerValue = is_array($answer) ? implode(', ', $answer) : (string)$answer;
 
-                    // Map answer values to categories
                     $normalizedAnswer = $this->normalizeAnswer($answerValue);
                     if (array_key_exists($normalizedAnswer, $stats)) {
                         $stats[$normalizedAnswer]++;
                     }
                 }
             }
+
 
             $this->responseStats[$question->id] = $stats;
         }

@@ -63,10 +63,9 @@
                         <thead class="bg-navy-50">
                             <tr>
                                 <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">#</th>
-                                <th class="px-4 py-3 uppercase text-left text-xs font-semibold text-navy-700">Tanggal
-                                </th>
                                 @foreach ($section->questions as $q)
-                                    <th class="px-4 py-3 uppercase text-center text-xs font-semibold text-navy-700 max-w-20" title="{{ $q->question_text }}">
+                                    <th class="px-4 py-3 uppercase text-center text-xs font-semibold text-navy-700 max-w-20"
+                                        title="{{ $q->question_text }}">
                                         <p class="line-clamp-1">{{ $q->question_text }}
                                     </th>
                                     </p>
@@ -78,11 +77,20 @@
                                 <tr class="hover:bg-navy-50/50">
                                     <td class="px-4 py-2 text-sm text-neutral-700">{{ $responses->firstItem() + $i }}
                                     </td>
-                                    <td class="px-4 py-2 text-sm text-neutral-700">
-                                        {{ date('d F Y', strtotime($row->submitted_at)) }}</td>
                                     @foreach ($section->questions as $q)
                                         @php
-                                            $answers = json_decode($row->question_answers, true) ?? [];
+                                            $answersRaw = $row->question_answers;
+
+                                            if (is_string($answersRaw)) {
+                                                $decoded = json_decode($answersRaw, true);
+
+                                                $answers = is_string($decoded) ? json_decode($decoded, true) : $decoded;
+                                            } elseif (is_array($answersRaw)) {
+                                                $answers = $answersRaw;
+                                            } else {
+                                                $answers = [];
+                                            }
+
                                             $answer = $answers[$q->id] ?? '-';
                                         @endphp
                                         <td class="px-4 py-2 text-sm text-neutral-700 text-center">

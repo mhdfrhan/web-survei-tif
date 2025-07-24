@@ -4,7 +4,7 @@
     <div class="min-h-[70vh] flex flex-col items-center justify-center bg-gradient-to-br from-navy-100 via-navy-50 to-blue-50 py-12 px-4 rounded-2xl">
         <div class="text-center mb-10">
             <h1 class="text-4xl md:text-5xl font-extrabold text-navy-800 mb-4">
-                Selamat Datang di Survei Fakultas Ilmu Komputer!
+                Selamat Datang di Survei Kepuasan <br> Fakultas Ilmu Komputer
             </h1>
             <p class="text-lg md:text-xl text-navy-700 font-medium max-w-2xl mx-auto">
                 Silakan pilih jenis survei yang ingin Anda isi. Setiap suara Anda sangat berarti untuk kemajuan institusi.

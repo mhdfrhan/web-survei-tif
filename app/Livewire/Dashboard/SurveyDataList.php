@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Models\SurveyTypes;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SurveyResponsesExport;
+use App\Exports\SurveyResponsesVMTSExport;
 use App\Models\SurveyFormFields;
 use App\Models\SurveyQuestions;
 use App\Models\SurveyResponses;
@@ -50,8 +51,16 @@ class SurveyDataList extends Component
 
     public function exportExcel()
     {
-        $filename = 'survey_' . $this->surveyType . '_' . now()->format('Ymd_His') . '.xlsx';
-        return Excel::download(new SurveyResponsesExport($this->surveyType, $this->respondentCategory), $filename);
+        if ($this->surveyType === 'vmts') {
+            $filename = 'survey_vmts_fakultas_' . now()->format('Ymd_His') . '.xlsx';
+            return Excel::download(new SurveyResponsesVMTSExport($this->surveyType, $this->respondentCategory), $filename);
+        } elseif ($this->surveyType === 'vmtstif'){
+            $filename = 'survey_vmts_prodi_' . now()->format('Ymd_His') . '.xlsx';
+            return Excel::download(new SurveyResponsesVMTSExport($this->surveyType, $this->respondentCategory), $filename);
+        } else {
+            $filename = 'survey_' . $this->surveyType . '_' . now()->format('Ymd_His') . '.xlsx';
+            return Excel::download(new SurveyResponsesExport($this->surveyType, $this->respondentCategory), $filename);
+        }
     }
 
     public function getSurveyTypesProperty()

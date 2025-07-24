@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('survey_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // VMTS, Mahasiswa, Dosen, Tendik
+            $table->string('name'); // VMTS Fakultas, VMTS Prodi, Mahasiswa, Dosen, Tendik
             $table->string('title'); // Judul survey
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
