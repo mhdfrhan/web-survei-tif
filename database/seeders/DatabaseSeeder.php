@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Admin',
-        //     'email' => 'adminsurveitif@gmail.com',
-        //     'password' => bcrypt('adminsurveitif!@#)(*'),
-        // ]);
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'adminsurveitif@gmail.com',
+            'password' => bcrypt('adminsurveitif!@#)(*'),
+        ]);
 
         $this->call([
             SurveyResponseDosenSeeder::class,
